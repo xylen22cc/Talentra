@@ -314,7 +314,7 @@ export default function RecruiterDashboardView({
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <h3 className="text-base font-bold text-slate-900 dark:text-white font-display">Applications Tracking System (ATS)</h3>
                 <div className="flex gap-1">
-                  {['All', 'pending', 'accepted', 'rejected'].map((cat) => (
+                  {['All', 'pending', 'interview', 'accepted', 'rejected'].map((cat) => (
                     <button
                       key={cat}
                       onClick={() => setTargetType(cat)}
@@ -404,15 +404,38 @@ export default function RecruiterDashboardView({
                               <div className="flex gap-2">
                                 <button
                                   onClick={() => onUpdateApplicationStatus(app.id, 'rejected')}
-                                  className="p-1 px-3 rounded-lg text-rose-550 hover:bg-rose-500/10 text-xs font-black transition-all flex items-center gap-1 border border-rose-500/20"
+                                  className="p-1 px-3 rounded-lg text-rose-555 hover:bg-rose-500/10 text-xs font-black transition-all flex items-center gap-1 border border-rose-500/20 cursor-pointer"
+                                >
+                                  <XCircle className="w-4 h-4" /> Decline
+                                </button>
+                                <button
+                                  onClick={() => onUpdateApplicationStatus(app.id, 'interview')}
+                                  className="p-1 px-3 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold transition-all flex items-center gap-1 shadow-md cursor-pointer"
+                                >
+                                  <UserCheck className="w-4 h-4" /> Invite to Interview
+                                </button>
+                                <button
+                                  onClick={() => onUpdateApplicationStatus(app.id, 'accepted')}
+                                  className="p-1 px-3 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition-all flex items-center gap-1 shadow-md cursor-pointer"
+                                >
+                                  <CheckCircle2 className="w-4 h-4" /> Shortlist
+                                </button>
+                              </div>
+                            )}
+
+                            {app.status === 'interview' && (
+                              <div className="flex gap-2">
+                                <button
+                                  onClick={() => onUpdateApplicationStatus(app.id, 'rejected')}
+                                  className="p-1 px-3 rounded-lg text-rose-555 hover:bg-rose-500/10 text-xs font-black transition-all flex items-center gap-1 border border-rose-500/20 cursor-pointer"
                                 >
                                   <XCircle className="w-4 h-4" /> Decline
                                 </button>
                                 <button
                                   onClick={() => onUpdateApplicationStatus(app.id, 'accepted')}
-                                  className="p-1 px-3 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition-all flex items-center gap-1 shadow-md"
+                                  className="p-1 px-3 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition-all flex items-center gap-1 shadow-md cursor-pointer"
                                 >
-                                  <CheckCircle2 className="w-4 h-4" /> Shortlist
+                                  <CheckCircle2 className="w-4 h-4" /> Offer Job
                                 </button>
                               </div>
                             )}

@@ -943,6 +943,16 @@ export default function SeekerDashboard({
                           <p className="text-[9px] text-slate-600 dark:text-slate-350 mt-2">
                             {lang === 'id' ? 'Perekrut mengirimkan surat penawaran resmi!' : 'Finverge Recruiter sent your formal offer letter!'}
                           </p>
+                          <button
+                            id={`btn-chat-link-offered-${app.id}`}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              onNavigateToTab('chats');
+                            }}
+                            className="mt-3 w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-1 text-[10px] rounded-md transition-colors text-center cursor-pointer"
+                          >
+                            {lang === 'id' ? 'Buka Obrolan Messenger' : 'Open Conversation Messenger'}
+                          </button>
                         </div>
                       );
                     })}

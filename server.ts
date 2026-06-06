@@ -457,7 +457,7 @@ app.post('/api/applications/status', async (req, res) => {
   const { id, status } = req.body;
   db.updateApplicationStatus(id, status);
 
-  if (status === 'accepted') {
+  if (status === 'accepted' || status === 'interview') {
     try {
       const app = db.getApplications().find(a => a.id === id);
       if (app) {
@@ -472,8 +472,12 @@ app.post('/api/applications/status', async (req, res) => {
 
         const chatId = `chat-accepted-${id}`;
         
-        // Send actual chat message
-        const welcomeMessageContent = `Halo ${app.applicantName}, selamat! 🎉 Lamaran Anda untuk posisi *${app.applicantTitle}* di *${companyName}* sudah kami TERIMA!\n\nKami sangat terkesan dengan profil dan kualifikasi Anda. Kami ingin mengundang Anda untuk berdiskusi lebih lanjut mengenai langkah dan koordinasi wawancara berikutnya. Silakan balas pesan ini agar kita bisa mengobrol lebih lanjut dengan tim HRD ya!`;
+        let welcomeMessageContent = '';
+        if (status === 'interview') {
+          welcomeMessageContent = `Halo ${app.applicantName}, selamat! 🎉 Lamaran Anda untuk posisi *${app.applicantTitle}* di *${companyName}* telah lolos peninjauan berkas tahap awal dan kami ingin mengundang Anda ke tahap wawancara (interview)!\n\nKami sangat tertarik dengan keahlian Anda. Silakan balas pesan ini agar kita bisa mengatur waktu interview dan koordinasi teknis berikutnya ya!`;
+        } else {
+          welcomeMessageContent = `Halo ${app.applicantName}, selamat! 🎉 Lamaran Anda untuk posisi *${app.applicantTitle}* di *${companyName}* sudah kami TERIMA!\n\nKami sangat terkesan dengan profil dan kualifikasi Anda. Kami ingin mengundang Anda untuk berdiskusi lebih lanjut mengenai langkah dan koordinasi berikutnya. Silakan balas pesan ini agar kita bisa mengobrol lebih lanjut dengan tim HRD ya!`;
+        }
         
         db.addChatWebMessage(chatId, app.applicantTitle, companyName, {
           id: `msg-welcome-${Date.now()}`,
@@ -486,7 +490,7 @@ app.post('/api/applications/status', async (req, res) => {
         });
       }
     } catch (chatError) {
-      console.warn('Failed to send automated direct chat for accepted application:', chatError);
+      console.warn('Failed to send automated direct chat for accepted/interview application:', chatError);
     }
   }
 
@@ -588,11 +592,11 @@ app.post('/api/chats', async (req, res) => {
   const { chatId, jobTitle, companyName, message } = req.body;
   
   // Add original candidate user message
-  const updatedSession = db.addChatWebMessage(chatId, jobTitle, companyName, message);
+  let updatedSession = db.addChatWebMessage(chatId, jobTitle, companyName, message);
 
   // If candidate was sending, let the Recruiter or HR Assistant generate an intelligent automated response!
   if (message.senderRole === 'seeker') {
-    setTimeout(async () => {
+    try {
       const chatSession = db.getChats().find(s => s.id === chatId);
       const recruiterName = chatSession?.recruiterName || 'Sarah Connor';
       const recruiterId = chatSession?.recruiterId || 'usr-2';
@@ -626,7 +630,7 @@ app.post('/api/chats', async (req, res) => {
         }
       }
 
-      db.addChatWebMessage(chatId, jobTitle, dbCompanyName, {
+      updatedSession = db.addChatWebMessage(chatId, jobTitle, dbCompanyName, {
         id: `msg-${Date.now()}`,
         conversationId: chatId,
         senderId: recruiterId,
@@ -635,7 +639,9 @@ app.post('/api/chats', async (req, res) => {
         content: aiReply,
         timestamp: new Date().toISOString()
       });
-    }, 1500);
+    } catch (err) {
+      console.warn('Failed to generate synchronous AI recruiter response:', err);
+    }
   }
 
   res.json(updatedSession);
