@@ -5,9 +5,13 @@ import { Company, Job, JobSeekerProfile, Application, ChatSession, User, Company
 const DB_DIR = path.join(process.cwd(), 'data');
 const DB_FILE = path.join(DB_DIR, 'db.json');
 
-// Ensure DB directory exists
-if (!fs.existsSync(DB_DIR)) {
-  fs.mkdirSync(DB_DIR, { recursive: true });
+// Ensure DB directory exists safely (resilient to read-only environments like Vercel)
+try {
+  if (!fs.existsSync(DB_DIR)) {
+    fs.mkdirSync(DB_DIR, { recursive: true });
+  }
+} catch (err) {
+  console.warn('[DB] Could not create database directory (possibly a read-only filesystem like Vercel):', err);
 }
 
 interface DBState {

@@ -7,15 +7,18 @@ let supabaseInstance: SupabaseClient | null = null;
  * Verifies if all Supabase cluster configuration criteria are satisfied.
  */
 export function isSupabaseConfigured(): boolean {
+  const url = process.env.SUPABASE_URL;
+  if (!url || !url.trim() || !url.startsWith('http')) {
+    return false;
+  }
   return !!(
-    process.env.SUPABASE_URL &&
-    (process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY)
+    process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY
   );
 }
 
 /**
  * Lazy loads the Supabase client safely without module loading failures
- * if environment keys are missing.
+ * if environment keys are missing or invalid.
  */
 export function getSupabaseClient(): SupabaseClient | null {
   if (!isSupabaseConfigured()) {
@@ -23,16 +26,21 @@ export function getSupabaseClient(): SupabaseClient | null {
   }
 
   if (!supabaseInstance) {
-    const url = process.env.SUPABASE_URL as string;
-    const key = (process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY) as string;
-    
-    console.log(`[Supabase] Lazy-initializing connection to ${url}`);
-    supabaseInstance = createClient(url, key, {
-      auth: {
-        persistSession: false,
-        autoRefreshToken: false
-      }
-    });
+    try {
+      const url = process.env.SUPABASE_URL as string;
+      const key = (process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY) as string;
+      
+      console.log(`[Supabase] Lazy-initializing connection to ${url}`);
+      supabaseInstance = createClient(url, key, {
+        auth: {
+          persistSession: false,
+          autoRefreshToken: false
+        }
+      });
+    } catch (e) {
+      console.error('[Supabase] Failed to initialize Supabase client:', e);
+      return null;
+    }
   }
 
   return supabaseInstance;
