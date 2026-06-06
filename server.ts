@@ -1058,3 +1058,6 @@ async function startServer() {
 }
 
 startServer();
+
+// Tambahkan ini di akhir file server.ts Anda agar kompatibel dengan Vercel:
+export default app;
