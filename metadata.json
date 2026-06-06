@@ -1,0 +1,6 @@
+{
+  "name": "Job Seeker SaaS Platform",
+  "description": "A comprehensive multi-role recruitment and career platform featuring AI CV analysis, skill-gap detection, mock interview simulations, real-time-styled chat, and multi-role dashboards.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

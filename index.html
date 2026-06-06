@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Talentra – AI Recruitment & Job Seeker SaaS</title>
+    <script>
+      // Gracefully silence expected HMR WebSocket errors in sandboxed dev environment
+      window.addEventListener('unhandledrejection', function(event) {
+        var reason = event.reason;
+        var msg = '';
+        if (reason) {
+          if (typeof reason === 'string') {
+            msg = reason;
+          } else {
+            msg = reason.message || String(reason);
+          }
+        } else {
+          msg = String(event);
+        }
+        
+        if (
+          msg.indexOf('Websocket') !== -1 || 
+          msg.indexOf('websocket') !== -1 || 
+          msg.indexOf('WebSocket') !== -1 || 
+          msg.indexOf('closed without opened') !== -1
+        ) {
+          event.preventDefault();
+          event.stopPropagation();
+          console.log('[Vite HMR] Ignored expected websocket disconnect from iframe environment.');
+        }
+      }, true);
+
+      window.addEventListener('error', function(event) {
+        var msg = event.message || '';
+        var error = event.error;
+        if (error && error.message) {
+          msg += ' ' + error.message;
+        }
+        if (
+          msg.indexOf('Websocket') !== -1 || 
+          msg.indexOf('websocket') !== -1 || 
+          msg.indexOf('WebSocket') !== -1 || 
+          msg.indexOf('closed without opened') !== -1
+        ) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+      }, true);
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+

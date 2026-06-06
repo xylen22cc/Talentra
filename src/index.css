@@ -1,0 +1,102 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap');
+@import "tailwindcss";
+
+@variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Space Grotesk", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+}
+
+/* Custom global rules for Immersive UI theme */
+body {
+  font-family: var(--font-sans);
+}
+
+.dark {
+  --background: 5 6 11; /* #05060b as RGB components */
+  --foreground: 226 232 240;
+}
+
+@layer base {
+  /* Enhance dark mode elements with high-end premium styling */
+  .dark body,
+  .dark .min-h-screen,
+  .dark #root {
+    background-color: #05060b !important;
+  }
+
+  /* Make dark cards and grids ultra sleek glass with subtle borders */
+  .dark .bg-slate-900,
+  .dark .bg-slate-900\/40,
+  .dark .bg-slate-950\/40,
+  .dark .bg-indigo-950\/10,
+  .dark .bg-indigo-950\/20,
+  .dark .bg-purple-950\/10 {
+    background-color: rgba(10, 12, 20, 0.6) !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+    border-color: rgba(255, 255, 255, 0.06) !important;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05) !important;
+  }
+
+  /* Make hover cards glossier */
+  .dark .hover\:bg-slate-900\/60:hover,
+  .dark .hover\:bg-white\/\[0\.08\]:hover {
+    background-color: rgba(255, 255, 255, 0.05) !important;
+    border-color: rgba(255, 255, 255, 0.15) !important;
+  }
+
+  /* Input fields sleek dark borders and focus */
+  .dark input,
+  .dark select,
+  .dark textarea {
+    background-color: rgba(5, 6, 11, 0.6) !important;
+    border-color: rgba(255, 255, 255, 0.08) !important;
+    color: #e2e8f0 !important;
+  }
+  
+  .dark input:focus,
+  .dark select:focus,
+  .dark textarea:focus {
+    border-color: #6366f1 !important;
+    box-shadow: 0 0 15px rgba(99, 102, 241, 0.15) !important;
+  }
+
+  /* Enhance headers & navbars with glass */
+  .dark header,
+  .dark footer {
+    background-color: rgba(10, 12, 20, 0.82) !important;
+    backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(16px) !important;
+    border-color: rgba(255, 255, 255, 0.05) !important;
+  }
+
+  /* Highlighting text and badges */
+  .dark h1, .dark h2, .dark h3 {
+    font-family: var(--font-display), var(--font-sans);
+  }
+}
+
+/* Hide all scrollbars globally for a premium immersive aesthetic */
+* {
+  scrollbar-width: none !important; /* Firefox */
+  -ms-overflow-style: none !important; /* IE and Edge */
+}
+::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+/* Fallback/Specific classes if needed */
+.no-scrollbar {
+  -ms-overflow-style: none !important;
+  scrollbar-width: none !important;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
