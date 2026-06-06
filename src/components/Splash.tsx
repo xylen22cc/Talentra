@@ -11,9 +11,16 @@ export default function Splash({ onComplete }: SplashProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const { t, lang } = useLanguage();
 
+  const onCompleteRef = useRef(onComplete);
+  useEffect(() => {
+    onCompleteRef.current = onComplete;
+  }, [onComplete]);
+
   useEffect(() => {
     // 2.2 seconds timer for exit completed state
-    const timer = setTimeout(onComplete, 2250);
+    const timer = setTimeout(() => {
+      onCompleteRef.current();
+    }, 2250);
 
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({ defaults: { ease: 'power4.out' } });
@@ -63,7 +70,7 @@ export default function Splash({ onComplete }: SplashProps) {
       clearTimeout(timer);
       ctx.revert();
     };
-  }, [onComplete]);
+  }, []);
 
   return (
     <div 
