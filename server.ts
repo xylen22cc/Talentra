@@ -885,8 +885,12 @@ app.delete('/api/companies/:id', async (req, res) => {
 app.post('/api/users/add', async (req, res) => {
   try {
     const { name, email, role, companyId, avatar, password } = req.body;
-    if (!name || !email || !role) {
-      return res.status(400).json({ error: 'User name, email and role identifier are required.' });
+    if (!name || !name.trim() || !email || !email.trim() || !role || !password || !password.trim()) {
+      return res.status(400).json({ error: 'Data registrasi tidak lengkap! Nama, Email, Peran (Role), dan Password semuanya wajib diisi.' });
+    }
+
+    if (password.length < 8) {
+      return res.status(400).json({ error: 'Password tidak boleh kurang dari 8 karakter!' });
     }
 
     // Check if user already exists

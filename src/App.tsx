@@ -296,7 +296,14 @@ export default function App() {
 
   const handleRegisterCustomUser = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!customName || !customEmail) return;
+    if (!customName.trim() || !customEmail.trim() || !customPassword.trim()) {
+      setAuthError(lang === 'id' ? 'Semua kolom input (Nama, Email, dan Password) wajib diisi!' : 'All fields (Name, Email, and Password) are mandatory!');
+      return;
+    }
+    if (customPassword.length < 8) {
+      setAuthError(lang === 'id' ? 'Password tidak boleh kurang dari 8 karakter!' : 'Password must be at least 8 characters!');
+      return;
+    }
     setAuthError(null);
 
     try {
@@ -308,7 +315,7 @@ export default function App() {
             name: customName,
             email: customEmail,
             role: customRole,
-            password: customPassword || undefined,
+            password: customPassword,
             avatar: `https://images.unsplash.com/photo-${
               customRole === 'seeker' 
                 ? '1535713875002-d1d0cf377fde' 
@@ -1483,7 +1490,7 @@ export default function App() {
                       <input
                         type="email"
                         required
-                        placeholder="e.g. applicant@company.com"
+                        placeholder=""
                         value={loginEmail}
                         onChange={(e) => setLoginEmail(e.target.value)}
                         className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-855 rounded-xl text-xs text-slate-800 dark:text-white placeholder-slate-450 focus:outline-none focus:border-indigo-500 font-semibold"
@@ -1496,7 +1503,8 @@ export default function App() {
                       </label>
                       <input
                         type="password"
-                        placeholder={lang === 'id' ? 'Masukkan password akun' : 'Enter account password'}
+                        required
+                        placeholder=""
                         value={loginPassword}
                         onChange={(e) => setLoginPassword(e.target.value)}
                         className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-855 rounded-xl text-xs text-slate-800 dark:text-white placeholder-slate-450 focus:outline-none focus:border-indigo-500 font-semibold"
@@ -1526,7 +1534,7 @@ export default function App() {
                       <input
                         type="text"
                         required
-                        placeholder="e.g. Feri Irawan"
+                        placeholder=""
                         value={customName}
                         onChange={(e) => setCustomName(e.target.value)}
                         className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-850 rounded-xl text-xs text-slate-800 dark:text-white placeholder-slate-450 focus:outline-none focus:border-indigo-500 font-semibold"
@@ -1538,7 +1546,7 @@ export default function App() {
                       <input
                         type="email"
                         required
-                        placeholder="e.g. applicant@company.com"
+                        placeholder=""
                         value={customEmail}
                         onChange={(e) => setCustomEmail(e.target.value)}
                         className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-855 rounded-xl text-xs text-slate-800 dark:text-white placeholder-slate-450 focus:outline-none focus:border-indigo-500 font-semibold"
@@ -1546,16 +1554,47 @@ export default function App() {
                     </div>
 
                     <div>
-                      <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">
-                        Password ({lang === 'id' ? 'Opsional' : 'Optional'})
+                      <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 font-sans flex items-center justify-between">
+                        <span>Password</span>
+                        <span className="text-[9px] text-indigo-400 font-normal uppercase tracking-wider">{lang === 'id' ? 'Wajib (Min 8 Karakter)' : 'Required (Min 8 Chars)'}</span>
                       </label>
                       <input
                         type="password"
-                        placeholder="e.g. 123"
+                        required
+                        minLength={8}
+                        placeholder=""
                         value={customPassword}
                         onChange={(e) => setCustomPassword(e.target.value)}
                         className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-855 rounded-xl text-xs text-slate-800 dark:text-white placeholder-slate-450 focus:outline-none focus:border-indigo-500 font-semibold"
                       />
+                      {customPassword && customPassword.length < 8 && (
+                        <p className="text-[10px] text-rose-500 font-bold mt-1">
+                          {lang === 'id' ? '⚠️ Password minimal harus 8 karakter!' : '⚠️ Password must be at least 8 characters!'}
+                        </p>
+                      )}
+                      {customPassword && customPassword.length >= 8 && (
+                        (() => {
+                          const hasUpper = /[A-Z]/.test(customPassword);
+                          const hasDigit = /[0-9]/.test(customPassword);
+                          const hasSpecial = /[^A-Za-z0-9]/.test(customPassword);
+                          const isWeak = !(hasUpper && (hasDigit || hasSpecial));
+                          if (isWeak) {
+                            return (
+                              <p className="text-[10px] text-amber-500 font-bold mt-1 leading-relaxed">
+                                {lang === 'id' 
+                                  ? '⚠️ Peringatan: Password Anda lemah! Masukkan kombinasi huruf besar, angka, dan karakter unik agar lebih aman.' 
+                                  : '⚠️ Warning: Password is weak! Combine uppercase letters, numbers, and symbols for better safety.'}
+                              </p>
+                            );
+                          } else {
+                            return (
+                              <p className="text-[10px] text-emerald-500 font-bold mt-1">
+                                {lang === 'id' ? '✓ Password kuat.' : '✓ Strong password.'}
+                              </p>
+                            );
+                          }
+                        })()
+                      )}
                     </div>
 
                     <div>
